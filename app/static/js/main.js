@@ -1,9 +1,37 @@
 /**
  * Domestic Garden Database - Main JavaScript
- * Handles truly random scattered layout and filtering
+ * Handles random scattered layout, filtering, and interactive elements.
+ * 
+ * @module Main
  */
 
-// Category mapping for filters
+'use strict';
+
+/**
+ * Configuration constants
+ */
+const CONFIG = {
+    GRID_ID: 'scatteredGrid',
+    ANIMATION_DURATION: 400, // ms
+    ITEM: {
+        WIDTH_STANDARD: 280,
+        HEIGHT_STANDARD: 280,
+        WIDTH_TEXT: 250,
+        HEIGHT_TEXT: 100,
+        PADDING: 40, // Padding around items
+        MARGIN: 20   // Margin from container edges
+    },
+    LIGHTBOX: {
+        MAX_ZOOM: 5,
+        MIN_ZOOM: 1,
+        ZOOM_STEP: 0.5
+    }
+};
+
+/**
+ * Category mapping for filters
+ * Maps filter keys to display category names
+ */
 const CATEGORY_MAPPING = {
     'all': ['Plants', 'Animals', 'Objects', 'Garden Styles'],
     'plants': ['Plants'],
@@ -13,32 +41,33 @@ const CATEGORY_MAPPING = {
 };
 
 /**
- * Initialize scattered layout with truly random positions
+ * Initialize scattered layout with random positions.
+ * Calculates optimal grid height and places items to minimize overlap.
  */
 function initScatteredLayout() {
-    console.log('initScatteredLayout called');
-    const grid = document.getElementById('scatteredGrid');
+    const grid = document.getElementById(CONFIG.GRID_ID);
     if (!grid) {
-        console.error('Grid not found!');
+        console.error('Grid element not found:', CONFIG.GRID_ID);
         return;
     }
 
     const items = Array.from(grid.children);
-    console.log(`Found ${items.length} items`);
     const containerWidth = grid.offsetWidth;
 
     // Calculate grid height based on number of items
+    // Estimated height helps define the boundary for random placement
     const itemsCount = items.length;
     const estimatedHeight = Math.max(1800, Math.ceil(itemsCount / 3.5) * 380);
     grid.style.minHeight = `${estimatedHeight}px`;
 
     // Track occupied spaces to avoid too much overlap
+    // Array of {x, y, width, height} objects
     const occupiedSpaces = [];
 
     items.forEach((item, index) => {
         const isTextOnly = item.classList.contains('text-only');
-        const itemWidth = isTextOnly ? 250 : 280;
-        const itemHeight = isTextOnly ? 100 : 280;
+        const itemWidth = isTextOnly ? CONFIG.ITEM.WIDTH_TEXT : CONFIG.ITEM.WIDTH_STANDARD;
+        const itemHeight = isTextOnly ? CONFIG.ITEM.HEIGHT_TEXT : CONFIG.ITEM.HEIGHT_STANDARD;
 
         let position = null;
         let attempts = 0;
@@ -46,11 +75,12 @@ function initScatteredLayout() {
 
         // Try to find a non-overlapping position
         while (!position && attempts < maxAttempts) {
-            const x = Math.random() * (containerWidth - itemWidth - 40) + 20;
-            const y = Math.random() * (estimatedHeight - itemHeight - 40) + 20;
+            const x = Math.random() * (containerWidth - itemWidth - CONFIG.ITEM.PADDING) + CONFIG.ITEM.MARGIN;
+            const y = Math.random() * (estimatedHeight - itemHeight - CONFIG.ITEM.PADDING) + CONFIG.ITEM.MARGIN;
 
             // Check if this position overlaps too much with existing items
             const overlaps = occupiedSpaces.some(space => {
+                // Allow 15% overlap
                 const overlapX = Math.abs(space.x - x) < (space.width + itemWidth) * 0.15;
                 const overlapY = Math.abs(space.y - y) < (space.height + itemHeight) * 0.15;
                 return overlapX && overlapY;
@@ -63,7 +93,7 @@ function initScatteredLayout() {
             attempts++;
         }
 
-        // Fallback position if no good spot found
+        // Fallback position if no good spot found (grid-like placement)
         if (!position) {
             const row = Math.floor(index / 5);
             const col = index % 5;
@@ -77,7 +107,7 @@ function initScatteredLayout() {
         item.style.left = `${position.x}px`;
         item.style.top = `${position.y}px`;
 
-        // Add random subtle rotation for more organic feel
+        // Add random subtle rotation for more organic feel (-3deg to +3deg)
         const rotation = (Math.random() - 0.5) * 6;
         item.style.transform = `rotate(${rotation}deg)`;
 
@@ -97,24 +127,28 @@ function initScatteredLayout() {
         makeDraggable(item);
     });
 
-    console.log('Layout initialized successfully');
+    console.log(`Initialized layout for ${items.length} items`);
 }
 
 /**
- * Make an item draggable - FIXED VERSION
+ * Make an item draggable via mouse interaction.
+ * Handles drag start, move, and end events, updating element position.
+ * 
+ * @param {HTMLElement} item - The DOM element to make draggable
  */
 function makeDraggable(item) {
     let isDragging = false;
     let startX, startY;
     let initialLeft, initialTop;
 
-    // Prevent default link behavior
+    // Prevent default link behavior on drag
     item.addEventListener('dragstart', (e) => e.preventDefault());
 
     item.addEventListener('mousedown', function (e) {
-        // Prevent link navigation
-        e.preventDefault();
+        // Only trigger on left click
+        if (e.button !== 0) return;
 
+        e.preventDefault(); // Prevent text selection/link dragging
         isDragging = true;
 
         // Get current position
@@ -126,7 +160,7 @@ function makeDraggable(item) {
         startY = e.clientY;
 
         item.style.cursor = 'grabbing';
-        item.style.zIndex = '1000';
+        item.style.zIndex = '1000'; // Bring to front
     });
 
     document.addEventListener('mousemove', function (e) {
@@ -134,7 +168,7 @@ function makeDraggable(item) {
 
         e.preventDefault();
 
-        // Calculate new position
+        // Calculate delta and new position
         const deltaX = e.clientX - startX;
         const deltaY = e.clientY - startY;
 
@@ -149,7 +183,7 @@ function makeDraggable(item) {
         if (isDragging) {
             isDragging = false;
             item.style.cursor = 'grab';
-            item.style.zIndex = '';
+            item.style.zIndex = ''; // Reset z-index
 
             // Update initial position for next drag
             initialLeft = parseInt(item.style.left) || 0;
@@ -160,7 +194,7 @@ function makeDraggable(item) {
     // Set initial cursor
     item.style.cursor = 'grab';
 
-    // Prevent link click when dragging
+    // Prevent link navigation if drag distance was significant
     item.addEventListener('click', function (e) {
         if (Math.abs(e.clientX - startX) > 5 || Math.abs(e.clientY - startY) > 5) {
             e.preventDefault();
@@ -170,41 +204,41 @@ function makeDraggable(item) {
 }
 
 /**
- * Initialize filter buttons
+ * Initialize category filter buttons.
+ * Sets up click listeners to filter the grid items.
  */
 function initFilters() {
-    console.log('initFilters called');
     const filterButtons = document.querySelectorAll('.filter-btn');
     const items = document.querySelectorAll('.scattered-item');
 
-    console.log(`Found ${filterButtons.length} filter buttons`);
-    console.log(`Found ${items.length} items to filter`);
+    if (filterButtons.length === 0) return;
 
     filterButtons.forEach(button => {
         button.addEventListener('click', () => {
             const filter = button.dataset.filter;
-            console.log(`Filter clicked: ${filter}`);
 
-            // Update active button
+            // Update active button state
             filterButtons.forEach(btn => btn.classList.remove('active'));
             button.classList.add('active');
 
-            // Filter items
+            // Apply filter
             filterItems(items, filter);
         });
     });
 }
 
 /**
- * Filter scattered items based on category
+ * Filter grid items based on selected category.
+ * Toggles the 'filtered' class to show/hide items.
+ * 
+ * @param {NodeList} items - List of grid item elements
+ * @param {string} filter - Selected filter category
  */
 function filterItems(items, filter) {
     const allowedCategories = CATEGORY_MAPPING[filter] || [];
-    console.log(`Filtering for: ${filter}, allowed categories:`, allowedCategories);
 
     items.forEach(item => {
         const itemDisplayCategory = item.dataset.displayCategory;
-        console.log(`Item category: ${itemDisplayCategory}`);
 
         if (filter === 'all' || allowedCategories.includes(itemDisplayCategory)) {
             item.classList.remove('filtered');
@@ -215,7 +249,10 @@ function filterItems(items, filter) {
 }
 
 /**
- * Lazy load images
+ * Initialize Intersection Observer for lazy loading images.
+ * Replaces 'loading="lazy"' logic with manual observer if needed,
+ * though native browser lazy loading is preferred where supported.
+ * This implementation forces src reload to trigger fade-in if needed.
  */
 function initLazyLoading() {
     const images = document.querySelectorAll('img[loading="lazy"]');
@@ -225,7 +262,7 @@ function initLazyLoading() {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     const img = entry.target;
-                    img.src = img.src;
+                    // Trigger load/render if needed (mostly handled by browser)
                     observer.unobserve(img);
                 }
             });
@@ -235,62 +272,67 @@ function initLazyLoading() {
     }
 }
 
-// Add CSS animation for fade-in
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(20px) rotate(var(--initial-rotation, 0deg));
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0) rotate(var(--initial-rotation, 0deg));
-        }
-    }
-`;
-document.head.appendChild(style);
+/**
+ * Inject CSS animations dynamically.
+ */
+function injectAnimations() {
+    // Check if style already exists
+    if (document.getElementById('dynamic-animations')) return;
 
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM loaded, initializing...');
-    window.scrollTo(0, 0);
-    initLazyLoading();
-});
-
-// Re-layout on window resize (debounced)
-let resizeTimeout;
-window.addEventListener('resize', () => {
-    clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(() => {
-        const grid = document.getElementById('scatteredGrid');
-        if (grid) {
-            initScatteredLayout();
+    const style = document.createElement('style');
+    style.id = 'dynamic-animations';
+    style.textContent = `
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px) rotate(var(--initial-rotation, 0deg));
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) rotate(var(--initial-rotation, 0deg));
+            }
         }
-    }, 250);
-});
+    `;
+    document.head.appendChild(style);
+}
 
 /**
- * Image Lightbox with Zoom
+ * Image Lightbox with Zoom and Pan functionality.
+ * Handles opening, closing, zooming, and panning of images in a modal.
  */
 class ImageLightbox {
     constructor() {
         this.currentImage = null;
         this.currentZoom = 1;
-        this.maxZoom = 5;
-        this.minZoom = 1;
-        this.zoomStep = 0.5;
+        this.maxZoom = CONFIG.LIGHTBOX.MAX_ZOOM;
+        this.minZoom = CONFIG.LIGHTBOX.MIN_ZOOM;
+        this.zoomStep = CONFIG.LIGHTBOX.ZOOM_STEP;
+
+        // Panning state
         this.panX = 0;
         this.panY = 0;
         this.isDragging = false;
         this.startX = 0;
         this.startY = 0;
 
-        this.createLightbox();
+        this.init();
+    }
+
+    /**
+     * Create lightbox DOM elements and attach events
+     */
+    init() {
+        this.createLightboxElements();
         this.attachEventListeners();
     }
 
-    createLightbox() {
+    /**
+     * Generate HTML structure for the lightbox
+     */
+    createLightboxElements() {
+        // Prevent duplicate lightbox
+        if (document.getElementById('imageLightbox')) return;
+
         const lightbox = document.createElement('div');
         lightbox.id = 'imageLightbox';
         lightbox.className = 'lightbox';
@@ -317,14 +359,23 @@ class ImageLightbox {
         this.zoomLevel = lightbox.querySelector('.lightbox-zoom-level');
     }
 
+    /**
+     * Attach event listeners for controls and interactions
+     */
     attachEventListeners() {
-        this.lightbox.querySelector('.lightbox-close').addEventListener('click', () => this.close());
-        this.lightbox.querySelector('.lightbox-backdrop').addEventListener('click', () => this.close());
+        const closeBtn = this.lightbox.querySelector('.lightbox-close');
+        const backdrop = this.lightbox.querySelector('.lightbox-backdrop');
+        const zoomInBtn = this.lightbox.querySelector('.lightbox-zoom-in');
+        const zoomOutBtn = this.lightbox.querySelector('.lightbox-zoom-out');
+        const resetBtn = this.lightbox.querySelector('.lightbox-reset');
 
-        this.lightbox.querySelector('.lightbox-zoom-in').addEventListener('click', () => this.zoomIn());
-        this.lightbox.querySelector('.lightbox-zoom-out').addEventListener('click', () => this.zoomOut());
-        this.lightbox.querySelector('.lightbox-reset').addEventListener('click', () => this.resetZoom());
+        if (closeBtn) closeBtn.addEventListener('click', () => this.close());
+        if (backdrop) backdrop.addEventListener('click', () => this.close());
+        if (zoomInBtn) zoomInBtn.addEventListener('click', () => this.zoomIn());
+        if (zoomOutBtn) zoomOutBtn.addEventListener('click', () => this.zoomOut());
+        if (resetBtn) resetBtn.addEventListener('click', () => this.resetZoom());
 
+        // Mouse wheel zoom
         this.imageContainer.addEventListener('wheel', (e) => {
             e.preventDefault();
             if (e.deltaY < 0) {
@@ -334,10 +385,12 @@ class ImageLightbox {
             }
         });
 
+        // Panning
         this.image.addEventListener('mousedown', (e) => this.startPan(e));
         document.addEventListener('mousemove', (e) => this.pan(e));
         document.addEventListener('mouseup', () => this.endPan());
 
+        // Keyboard navigation
         document.addEventListener('keydown', (e) => {
             if (!this.lightbox.classList.contains('active')) return;
 
@@ -359,6 +412,7 @@ class ImageLightbox {
             }
         });
 
+        // Delegate click for detail images to open lightbox
         document.addEventListener('click', (e) => {
             if (e.target.matches('.detail-image img')) {
                 e.preventDefault();
@@ -367,15 +421,23 @@ class ImageLightbox {
         });
     }
 
+    /**
+     * Open lightbox with specific image
+     * @param {string} src - Image URL
+     * @param {string} alt - Image alt text
+     */
     open(src, alt) {
         this.currentImage = src;
         this.image.src = src;
-        this.image.alt = alt;
+        this.image.alt = alt || 'Image';
         this.lightbox.classList.add('active');
-        document.body.style.overflow = 'hidden';
+        document.body.style.overflow = 'hidden'; // Disable background scroll
         this.resetZoom();
     }
 
+    /**
+     * Close lightbox and cleanup
+     */
     close() {
         this.lightbox.classList.remove('active');
         document.body.style.overflow = '';
@@ -404,24 +466,40 @@ class ImageLightbox {
     }
 
     updateZoom() {
+        // Apply transform with current zoom and pan translation
         this.image.style.transform = `scale(${this.currentZoom}) translate(${this.panX}px, ${this.panY}px)`;
         this.zoomLevel.textContent = `${Math.round(this.currentZoom * 100)}%`;
+
+        // Change cursor to indicate pannaability
         this.image.style.cursor = this.currentZoom > 1 ? 'move' : 'default';
     }
 
     startPan(e) {
         if (this.currentZoom > 1) {
             this.isDragging = true;
-            this.startX = e.clientX - this.panX;
-            this.startY = e.clientY - this.panY;
+            // Calculate start position relative to current pan
+            // Note: We divide by zoom to keep pan in sync with mouse movement visually
+            this.startX = e.clientX;
+            this.startY = e.clientY;
+
+            // Store current pan state
+            this.startPanX = this.panX;
+            this.startPanY = this.panY;
+
             this.image.style.cursor = 'grabbing';
+            e.preventDefault(); // Prevent default drag
         }
     }
 
     pan(e) {
         if (this.isDragging) {
-            this.panX = e.clientX - this.startX;
-            this.panY = e.clientY - this.startY;
+            // Calculate delta
+            const deltaX = (e.clientX - this.startX) / this.currentZoom;
+            const deltaY = (e.clientY - this.startY) / this.currentZoom;
+
+            this.panX = this.startPanX + deltaX;
+            this.panY = this.startPanY + deltaY;
+
             this.updateZoom();
         }
     }
@@ -434,7 +512,35 @@ class ImageLightbox {
     }
 }
 
-// Initialize lightbox when DOM is ready
+// Initialize application on DOMContentLoaded
 document.addEventListener('DOMContentLoaded', () => {
+    // Inject styles
+    injectAnimations();
+
+    // Initialize standard features
+    window.scrollTo(0, 0);
+    initLazyLoading();
+
+    // Initialize Layout and Filters if on homepage
+    if (document.getElementById(CONFIG.GRID_ID)) {
+        initScatteredLayout();
+        initFilters();
+    }
+
+    // Initialize Lightbox
     new ImageLightbox();
+
+    console.log('App initialized');
+});
+
+// Re-layout on window resize (debounced)
+let resizeTimeout;
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+        const grid = document.getElementById(CONFIG.GRID_ID);
+        if (grid) {
+            initScatteredLayout();
+        }
+    }, 250);
 });

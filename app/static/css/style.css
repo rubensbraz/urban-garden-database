@@ -891,14 +891,15 @@ body {
     /* Header responsive */
     .logo-text {
         font-size: var(--font-size-base);
+    }
+
+    .site-nav {
+        gap: var(--spacing-md);
 
 
-        .site-nav {
-            gap: var(--spacing-md);
-
-
-            .nav-link {
-                padding: var(--spacing-xs) var(--spacing-sm);
-                font-size: var(--font-size-small);
-            }
+        .nav-link {
+            padding: var(--spacing-xs) var(--spacing-sm);
+            font-size: var(--font-size-small);
         }
+    }
+}

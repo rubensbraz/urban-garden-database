@@ -1,26 +1,27 @@
-from fastapi import APIRouter, Depends, Request, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
+
 from app.database import get_db
-from app.routers.items import get_all_items
 from app.models import (
-    FloraAngiosperm,
-    FloraPteridophyte,
-    FloraGimnosperma,
-    FloraBryophyte,
     Fauna,
-    ObjectsAndOther,
+    FloraAngiosperm,
+    FloraBryophyte,
+    FloraGimnosperma,
+    FloraPteridophyte,
     GardenStyle,
+    ObjectsAndOther,
 )
+from app.routers.items import get_all_items
 from config.field_config import (
-    FLORA_ANGIOSPERM_FIELDS,
-    FLORA_PTERIDOPHYTE_FIELDS,
-    FLORA_GIMNOSPERMA_FIELDS,
-    FLORA_BRYOPHYTE_FIELDS,
     FAUNA_FIELDS,
-    OBJECTS_FIELDS,
+    FLORA_ANGIOSPERM_FIELDS,
+    FLORA_BRYOPHYTE_FIELDS,
+    FLORA_GIMNOSPERMA_FIELDS,
+    FLORA_PTERIDOPHYTE_FIELDS,
     GARDEN_STYLES_FIELDS,
+    OBJECTS_FIELDS,
 )
 
 router = APIRouter()
@@ -29,7 +30,16 @@ templates = Jinja2Templates(directory="app/templates")
 
 @router.get("/", response_class=HTMLResponse)
 async def homepage(request: Request, db: Session = Depends(get_db)):
-    """Homepage with masonry grid of all items"""
+    """
+    Render the homepage with the masonry grid of all items.
+
+    Args:
+        request: FastAPI request object.
+        db: Database session.
+
+    Returns:
+        TemplateResponse: Rendered 'index.html' template.
+    """
     items = get_all_items(db)
 
     return templates.TemplateResponse(
@@ -43,7 +53,15 @@ async def homepage(request: Request, db: Session = Depends(get_db)):
 
 @router.get("/about-images", response_class=HTMLResponse)
 async def about_images(request: Request):
-    """About images page with copyright information"""
+    """
+    Render the 'About Images' page with copyright information.
+
+    Args:
+        request: FastAPI request object.
+
+    Returns:
+        TemplateResponse: Rendered 'about_images.html' template.
+    """
     return templates.TemplateResponse(
         "about_images.html",
         {
@@ -56,7 +74,21 @@ async def about_images(request: Request):
 async def item_detail(
     request: Request, category: str, item_id: int, db: Session = Depends(get_db)
 ):
-    """Detail page for a single item"""
+    """
+    Render the detail page for a single item.
+
+    Args:
+        request: FastAPI request object.
+        category: Item category (slug).
+        item_id: Item primary key ID.
+        db: Database session.
+
+    Returns:
+        TemplateResponse: Rendered 'detail.html' template.
+
+    Raises:
+        HTTPException: If category or item is not found defined.
+    """
     model_map = {
         "flora_angiosperm": (FloraAngiosperm, FLORA_ANGIOSPERM_FIELDS),
         "flora_pteridophyte": (FloraPteridophyte, FLORA_PTERIDOPHYTE_FIELDS),
@@ -88,11 +120,12 @@ async def item_detail(
     if hasattr(item, "images") and item.images:
         for img_data in item.images:
             if isinstance(img_data, dict):
+                # Format label: "animal_picture" -> "Animal Picture"
+                label_text = img_data.get("type", "Image").replace("_", " ").title()
+
                 images.append(
                     {
-                        "label": img_data.get("type", "Image")
-                        .replace("_", " ")
-                        .title(),
+                        "label": label_text,
                         "path": img_data.get("path", ""),
                     }
                 )

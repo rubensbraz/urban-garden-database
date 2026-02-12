@@ -1,26 +1,36 @@
+from typing import Any, Dict, List, Optional
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from typing import List, Optional
+
 from app.database import get_db
 from app.models import (
-    FloraAngiosperm,
-    FloraPteridophyte,
-    FloraGimnosperma,
-    FloraBryophyte,
     Fauna,
-    ObjectsAndOther,
+    FloraAngiosperm,
+    FloraBryophyte,
+    FloraGimnosperma,
+    FloraPteridophyte,
     GardenStyle,
+    ObjectsAndOther,
 )
-from config.field_config import (
-    CATEGORY_DISPLAY_NAMES,
-    FILTER_CATEGORIES,
-)
+from config.field_config import CATEGORY_DISPLAY_NAMES, FILTER_CATEGORIES
 
 router = APIRouter()
 
 
-def get_primary_image(item) -> Optional[str]:
-    """Extract primary image path from JSON array"""
+def get_primary_image(item: Any) -> Optional[str]:
+    """
+    Extract the primary image path from an item's JSON array.
+
+    Prioritizes images with type 'reference' or 'animal'.
+    If not found, returns the first available image.
+
+    Args:
+        item: The database model instance.
+
+    Returns:
+        Optional[str]: Path to the image file, or None if no image exists.
+    """
     if hasattr(item, "images") and item.images:
         # Try to find 'reference' or 'animal' type first
         for img in item.images:
@@ -29,114 +39,83 @@ def get_primary_image(item) -> Optional[str]:
                 if img_type in ["reference", "animal"]:
                     return img.get("path")
 
-        # If no reference/animal image, return first image
+        # If no preferred type found, return first image
         if isinstance(item.images[0], dict):
             return item.images[0].get("path")
 
     return None
 
 
-def get_all_items(db: Session):
-    """Get all items from all tables"""
+def get_all_items(db: Session) -> List[Dict[str, Any]]:
+    """
+    Retrieve all items from all tables in the database.
+
+    Aggregates data from Flora, Fauna, Objects, and Garden Styles tables
+    into a unified list for the frontend grid.
+
+    Args:
+        db: Database session.
+
+    Returns:
+        List[Dict[str, Any]]: List of standardized item dictionaries.
+    """
     items = []
 
+    # Helper function to process items
+    def process_items(query_result, category_key):
+        for item in query_result:
+            # Handle name field variations (some use name_jp, others popular_name_jp)
+            jp_name = getattr(item, "popular_name_jp", getattr(item, "name_jp", ""))
+
+            items.append(
+                {
+                    "id": item.id,
+                    "category": category_key,
+                    "display_category": CATEGORY_DISPLAY_NAMES[category_key],
+                    "popular_name_english": item.popular_name_en,
+                    "popular_name_japanese": jp_name,
+                    "image": get_primary_image(item),
+                }
+            )
+
     # Flora Angiosperm
-    for item in db.query(FloraAngiosperm).all():
-        items.append(
-            {
-                "id": item.id,
-                "category": "flora_angiosperm",
-                "display_category": CATEGORY_DISPLAY_NAMES["flora_angiosperm"],
-                "popular_name_english": item.popular_name_en,
-                "popular_name_japanese": item.popular_name_jp,
-                "image": get_primary_image(item),
-            }
-        )
+    process_items(db.query(FloraAngiosperm).all(), "flora_angiosperm")
 
     # Flora Pteridophyte
-    for item in db.query(FloraPteridophyte).all():
-        items.append(
-            {
-                "id": item.id,
-                "category": "flora_pteridophyte",
-                "display_category": CATEGORY_DISPLAY_NAMES["flora_pteridophyte"],
-                "popular_name_english": item.popular_name_en,
-                "popular_name_japanese": item.popular_name_jp,
-                "image": get_primary_image(item),
-            }
-        )
+    process_items(db.query(FloraPteridophyte).all(), "flora_pteridophyte")
 
     # Flora Gimnosperma
-    for item in db.query(FloraGimnosperma).all():
-        items.append(
-            {
-                "id": item.id,
-                "category": "flora_gimnosperma",
-                "display_category": CATEGORY_DISPLAY_NAMES["flora_gimnosperma"],
-                "popular_name_english": item.popular_name_en,
-                "popular_name_japanese": item.popular_name_jp,
-                "image": get_primary_image(item),
-            }
-        )
+    process_items(db.query(FloraGimnosperma).all(), "flora_gimnosperma")
 
     # Flora Bryophyte
-    for item in db.query(FloraBryophyte).all():
-        items.append(
-            {
-                "id": item.id,
-                "category": "flora_bryophyte",
-                "display_category": CATEGORY_DISPLAY_NAMES["flora_bryophyte"],
-                "popular_name_english": item.popular_name_en,
-                "popular_name_japanese": item.popular_name_jp,
-                "image": get_primary_image(item),
-            }
-        )
+    process_items(db.query(FloraBryophyte).all(), "flora_bryophyte")
 
     # Fauna
-    for item in db.query(Fauna).all():
-        items.append(
-            {
-                "id": item.id,
-                "category": "fauna",
-                "display_category": CATEGORY_DISPLAY_NAMES["fauna"],
-                "popular_name_english": item.popular_name_en,
-                "popular_name_japanese": item.popular_name_jp,
-                "image": get_primary_image(item),
-            }
-        )
+    process_items(db.query(Fauna).all(), "fauna")
 
     # Objects
-    for item in db.query(ObjectsAndOther).all():
-        items.append(
-            {
-                "id": item.id,
-                "category": "objects_and_other",
-                "display_category": CATEGORY_DISPLAY_NAMES["objects_and_other"],
-                "popular_name_english": item.popular_name_en,
-                "popular_name_japanese": item.name_jp,
-                "image": get_primary_image(item),
-            }
-        )
+    process_items(db.query(ObjectsAndOther).all(), "objects_and_other")
 
     # Garden Styles
-    for item in db.query(GardenStyle).all():
-        items.append(
-            {
-                "id": item.id,
-                "category": "garden_styles",
-                "display_category": CATEGORY_DISPLAY_NAMES["garden_styles"],
-                "popular_name_english": item.popular_name_en,
-                "popular_name_japanese": item.name_jp,
-                "image": None,
-            }
-        )
+    process_items(db.query(GardenStyle).all(), "garden_styles")
 
     return items
 
 
 @router.get("/items")
-async def get_items(category: Optional[str] = None, db: Session = Depends(get_db)):
-    """Get all items, optionally filtered by category"""
+async def get_items(
+    category: Optional[str] = None, db: Session = Depends(get_db)
+) -> Dict[str, Any]:
+    """
+    Get all items, optionally filtered by category.
+
+    Args:
+        category: Optional category filter (e.g., 'plants', 'animals').
+        db: Database session.
+
+    Returns:
+        Dict: Dictionary containing 'items' list and 'total' count.
+    """
     items = get_all_items(db)
 
     # Filter by category if specified

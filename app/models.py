@@ -1,11 +1,12 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime
+from sqlalchemy import Column, DateTime, Integer, String, Text
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.sql import func
+
 from app.database import Base
 
 
 class FloraAngiosperm(Base):
-    """Flora - Angiosperm (Flowering plants) - STANDARDIZED SCHEMA"""
+    """Flora - Angiosperm (Flowering plants)"""
 
     __tablename__ = "flora_angiosperm"
 
@@ -51,7 +52,7 @@ class FloraAngiosperm(Base):
 
 
 class FloraPteridophyte(Base):
-    """Flora - Pteridophyte (Ferns) - STANDARDIZED SCHEMA"""
+    """Flora - Pteridophyte (Ferns)"""
 
     __tablename__ = "flora_pteridophyte"
 
@@ -80,7 +81,7 @@ class FloraPteridophyte(Base):
 
 
 class FloraGimnosperma(Base):
-    """Flora - Gimnosperma (Conifers) - STANDARDIZED SCHEMA"""
+    """Flora - Gimnosperma (Conifers)"""
 
     __tablename__ = "flora_gimnosperma"
 
@@ -111,7 +112,7 @@ class FloraGimnosperma(Base):
 
 
 class FloraBryophyte(Base):
-    """Flora - Bryophyte (Mosses) - STANDARDIZED SCHEMA"""
+    """Flora - Bryophyte (Mosses)"""
 
     __tablename__ = "flora_bryophyte"
 
@@ -137,7 +138,7 @@ class FloraBryophyte(Base):
 
 
 class Fauna(Base):
-    """Fauna - Animals - STANDARDIZED SCHEMA"""
+    """Fauna - Animals"""
 
     __tablename__ = "fauna"
 
@@ -170,7 +171,7 @@ class Fauna(Base):
 
 
 class ObjectsAndOther(Base):
-    """Objects and Other Items - STANDARDIZED SCHEMA"""
+    """Objects and Other Items"""
 
     __tablename__ = "objects_and_other"
 
@@ -189,7 +190,7 @@ class ObjectsAndOther(Base):
 
 
 class GardenStyle(Base):
-    """Garden Styles - STANDARDIZED SCHEMA"""
+    """Garden Styles"""
 
     __tablename__ = "garden_styles"
 

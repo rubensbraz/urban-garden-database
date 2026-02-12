@@ -8,13 +8,13 @@ This script:
 4. Imports all data with proper validation
 """
 
-import pandas as pd
-import sys
 import os
-import json
 import re
+import sys
 from pathlib import Path
-from typing import List, Dict, Optional
+from typing import Dict, List, Optional
+
+import pandas as pd
 
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -22,15 +22,14 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from app.database import SessionLocal, engine
 from app.models import (
     Base,
-    FloraAngiosperm,
-    FloraPteridophyte,
-    FloraGimnosperma,
-    FloraBryophyte,
     Fauna,
-    ObjectsAndOther,
+    FloraAngiosperm,
+    FloraBryophyte,
+    FloraGimnosperma,
+    FloraPteridophyte,
     GardenStyle,
+    ObjectsAndOther,
 )
-
 
 # ============================================================================
 # IMAGE MAPPING SYSTEM
