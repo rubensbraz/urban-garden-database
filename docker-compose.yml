@@ -24,7 +24,6 @@ services:
       - ./config:/app/config
       - ./data:/app/data
       - ./images:/app/images
-      - ./alembic:/app/alembic
     ports:
       - "8000:8000"
     environment:
