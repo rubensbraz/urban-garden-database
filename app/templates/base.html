@@ -11,23 +11,30 @@
     <meta property="og:url" content="{{ request.url }}">
     <meta property="og:title" content="{% block og_title %}Domestic Garden Database - Explore Japanese Garden Biodiversity{% endblock %}">
     <meta property="og:description" content="Comprehensive database of plants, animals, objects, and garden styles found in domestic gardens in Japan. Explore 218 species and items with detailed information and images.">
-    <meta property="og:image" content="{{ request.url.scheme }}://{{ request.url.netloc }}/static/favicon/og-image.png">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="{{ request.url }}">
     <meta property="twitter:title" content="{% block twitter_title %}Domestic Garden Database - Explore Japanese Garden Biodiversity{% endblock %}">
     <meta property="twitter:description" content="Comprehensive database of plants, animals, objects, and garden styles found in domestic gardens in Japan.">
-    <meta property="twitter:image" content="{{ request.url.scheme }}://{{ request.url.netloc }}/static/favicon/og-image.png">
     
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon/favicon-16x16.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png">
-    <link rel="manifest" href="/static/favicon/site.webmanifest">
+    <!-- Theme Color -->
     <meta name="theme-color" content="#3d9970">
     
     <title>{% block title %}Domestic Garden Database - Japanese Garden Biodiversity{% endblock %}</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/static/favicon/herb.svg">
+    <link rel="apple-touch-icon" href="/static/favicon/herb.svg">
+    <link rel="manifest" href="/static/favicon/site.webmanifest">
+    
+    <!-- Preload Critical Resources -->
+    <link rel="preload" href="/static/css/style.css" as="style">
+    <link rel="preload" href="/static/js/main.js" as="script">
+    
+    <!-- DNS Prefetch for External Resources -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -40,7 +47,36 @@
     {% block extra_head %}{% endblock %}
 </head>
 <body>
-    {% block content %}{% endblock %}
+    <!-- Site Header -->
+    <header class="site-header">
+        <div class="header-container">
+            <a href="/" class="site-logo">
+                <img src="/static/favicon/herb.svg" alt="Herb Icon" class="logo-icon" width="32" height="32">
+                <span class="logo-text">Domestic Garden Database</span>
+            </a>
+            <nav class="site-nav">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/about-images" class="nav-link">About Images</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="site-main">
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Site Footer -->
+    <footer class="site-footer">
+        <div class="footer-content">
+            <p class="footer-text">© 2026 Domestic Garden Database - Educational Project</p>
+            <div class="footer-links">
+                <a href="/about-images" class="footer-link">About Images & Copyright</a>
+                <span class="footer-separator">•</span>
+                <a href="mailto:contato@ayanasaitomira.com" class="footer-link">Contact</a>
+            </div>
+        </div>
+    </footer>
     
     <script src="/static/js/main.js"></script>
     {% block extra_scripts %}{% endblock %}

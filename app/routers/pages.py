@@ -41,6 +41,17 @@ async def homepage(request: Request, db: Session = Depends(get_db)):
     )
 
 
+@router.get("/about-images", response_class=HTMLResponse)
+async def about_images(request: Request):
+    """About images page with copyright information"""
+    return templates.TemplateResponse(
+        "about_images.html",
+        {
+            "request": request,
+        },
+    )
+
+
 @router.get("/item/{category}/{item_id}", response_class=HTMLResponse)
 async def item_detail(
     request: Request, category: str, item_id: int, db: Session = Depends(get_db)
