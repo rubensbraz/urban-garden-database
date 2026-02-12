@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}{{ item.popular_name_english }} - Domestic Garden Database{% endblock %}
+
+{% block content %}
+<div class="detail-container">
+    <!-- Back Button -->
+    <a href="/" class="back-button">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Back to Gallery
+    </a>
+    
+    <!-- Detail Card -->
+    <div class="detail-card">
+        <!-- Image Gallery -->
+        {% if images %}
+        <div class="detail-images">
+            {% for image in images %}
+            <div class="detail-image">
+                <img src="/images/{{ image.path }}" 
+                     alt="{{ image.label }}"
+                     onerror="this.parentElement.style.display='none'">
+                <p class="image-label">{{ image.label }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <!-- Content -->
+        <div class="detail-content">
+            <h1 class="detail-title">{{ item.popular_name_english }}</h1>
+            
+            <!-- Fields -->
+            <div class="detail-fields">
+                {% for field in fields %}
+                <div class="detail-field">
+                    <div class="detail-field-label">{{ field.label }}</div>
+                    <div class="detail-field-value">{{ field.value }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

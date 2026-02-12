@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="description" content="Explore the biodiversity of domestic gardens in Japan. Comprehensive database of plants (flora), animals (fauna), garden objects, and traditional garden styles with detailed information and images.">
+    <meta name="keywords" content="domestic garden, Japanese garden, flora, fauna, plants, animals, biodiversity, garden database, horticulture, wildlife, garden objects">
+    <meta name="author" content="Domestic Garden Database">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.url }}">
+    <meta property="og:title" content="{% block og_title %}Domestic Garden Database - Explore Japanese Garden Biodiversity{% endblock %}">
+    <meta property="og:description" content="Comprehensive database of plants, animals, objects, and garden styles found in domestic gardens in Japan. Explore 218 species and items with detailed information and images.">
+    <meta property="og:image" content="{{ request.url.scheme }}://{{ request.url.netloc }}/static/favicon/og-image.png">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="{{ request.url }}">
+    <meta property="twitter:title" content="{% block twitter_title %}Domestic Garden Database - Explore Japanese Garden Biodiversity{% endblock %}">
+    <meta property="twitter:description" content="Comprehensive database of plants, animals, objects, and garden styles found in domestic gardens in Japan.">
+    <meta property="twitter:image" content="{{ request.url.scheme }}://{{ request.url.netloc }}/static/favicon/og-image.png">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png">
+    <link rel="manifest" href="/static/favicon/site.webmanifest">
+    <meta name="theme-color" content="#3d9970">
+    
+    <title>{% block title %}Domestic Garden Database - Japanese Garden Biodiversity{% endblock %}</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    {% block content %}{% endblock %}
+    
+    <script src="/static/js/main.js"></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

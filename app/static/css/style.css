@@ -1,0 +1,463 @@
+:root {
+    /* ═══ COLOR PALETTE ═══ */
+    --color-primary: hsl(145, 70%, 45%);           /* Forest green */
+    --color-primary-dark: hsl(145, 70%, 35%);      /* Darker green for hover */
+    --color-primary-light: hsl(145, 70%, 55%);     /* Lighter green */
+    
+    --color-secondary: hsl(85, 65%, 50%);          /* Lime green accent */
+    --color-secondary-dark: hsl(85, 65%, 40%);
+    
+    --color-background: hsl(240, 15%, 8%);         /* Page background */
+    --color-surface: hsl(240, 12%, 12%);           /* Card backgrounds */
+    --color-surface-elevated: hsl(240, 12%, 16%);  /* Elevated surfaces */
+    
+    --color-text-primary: hsl(0, 0%, 95%);         /* Main text */
+    --color-text-secondary: hsl(0, 0%, 70%);       /* Secondary text */
+    --color-text-muted: hsl(0, 0%, 50%);           /* Muted text */
+    
+    --color-border: hsla(0, 0%, 100%, 0.1);        /* Border color */
+    --color-border-hover: hsla(0, 0%, 100%, 0.2);
+    
+    /* ═══ GRADIENTS ═══ */
+    --gradient-primary: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    --gradient-overlay: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.7) 100%);
+    --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+    
+    /* ═══ TYPOGRAPHY ═══ */
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-size-base: 16px;
+    --font-size-small: 14px;
+    --font-size-large: 18px;
+    --font-size-h1: 48px;
+    --font-size-h2: 32px;
+    --font-size-h3: 20px;
+    
+    --font-weight-light: 300;
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    
+    --line-height-tight: 1.2;
+    --line-height-normal: 1.5;
+    --line-height-relaxed: 1.7;
+    
+    /* ═══ SPACING ═══ */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    --spacing-2xl: 48px;
+    --spacing-3xl: 64px;
+    
+    /* ═══ LAYOUT ═══ */
+    --container-max-width: 1400px;
+    --container-padding: var(--spacing-lg);
+    
+    --header-height: 200px;
+    --filter-bar-height: 60px;
+    
+    /* ═══ MASONRY GRID ═══ */
+    --grid-gap: 16px;
+    --grid-columns: 6;                              /* More columns for variety */
+    --grid-min-column-width: 180px;                 /* Smaller minimum for more chaos */
+    
+    /* ═══ CARD STYLING ═══ */
+    --card-border-radius: 16px;
+    --card-padding: var(--spacing-md);
+    --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    --card-shadow-hover: 0 8px 40px rgba(0, 0, 0, 0.5);
+    
+    /* ═══ GLASSMORPHISM ═══ */
+    --glass-background: rgba(255, 255, 255, 0.05);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+    --glass-blur: 10px;
+    
+    /* ═══ ANIMATIONS ═══ */
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+    
+    --animation-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --animation-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* ═══ FILTER EFFECTS ═══ */
+    --filter-grayscale: grayscale(100%) opacity(0.3);
+    --filter-brightness-hover: brightness(1.1);
+    
+    /* ═══ RESPONSIVE BREAKPOINTS ═══ */
+    --breakpoint-mobile: 480px;
+    --breakpoint-tablet: 768px;
+    --breakpoint-desktop: 1024px;
+    --breakpoint-wide: 1440px;
+}
+
+/*
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                           🎯 CORE STYLES                                     ║
+║                                                                              ║
+║  The styles below use the configuration variables above.                    ║
+║  You generally don't need to edit this section.                             ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+*/
+
+/* ═══ RESET & BASE ═══ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: var(--font-size-base);
+}
+
+body {
+    font-family: var(--font-family);
+    background: var(--color-background);
+    color: var(--color-text-primary);
+    line-height: var(--line-height-normal);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ═══ CONTAINER ═══ */
+.container {
+    max-width: var(--container-max-width);
+    margin: 0 auto;
+    padding: var(--container-padding);
+}
+
+/* ═══ HEADER ═══ */
+.header {
+    text-align: center;
+    padding: var(--spacing-3xl) 0 var(--spacing-2xl);
+}
+
+.header-title {
+    font-size: var(--font-size-h1);
+    font-weight: var(--font-weight-bold);
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: var(--spacing-md);
+    line-height: var(--line-height-tight);
+}
+
+.header-subtitle {
+    font-size: var(--font-size-large);
+    color: var(--color-text-secondary);
+    font-weight: var(--font-weight-light);
+}
+
+/* ═══ FILTER BAR ═══ */
+.filter-bar {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: var(--spacing-2xl);
+    padding: var(--spacing-lg);
+    background: var(--glass-background);
+    border: var(--glass-border);
+    border-radius: var(--card-border-radius);
+    backdrop-filter: blur(var(--glass-blur));
+}
+
+.filter-btn {
+    padding: var(--spacing-md) var(--spacing-xl);
+    background: var(--color-surface);
+    border: 2px solid var(--color-border);
+    border-radius: 100px;
+    color: var(--color-text-primary);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    font-family: var(--font-family);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+}
+
+.filter-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--gradient-primary);
+    opacity: 0;
+    transition: opacity var(--transition-normal);
+    z-index: -1;
+}
+
+.filter-btn:hover {
+    border-color: var(--color-primary);
+    transform: translateY(-2px);
+}
+
+.filter-btn.active {
+    border-color: transparent;
+    color: white;
+}
+
+.filter-btn.active::before {
+    opacity: 1;
+}
+
+/* ═══ MASONRY GRID ═══ */
+.masonry-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--grid-min-column-width), 1fr));
+    gap: var(--grid-gap);
+    margin-bottom: var(--spacing-3xl);
+    grid-auto-rows: 80px; /* Smaller rows for more variation */
+}
+
+.masonry-item {
+    background: var(--color-surface);
+    border-radius: var(--card-border-radius);
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    transition: all var(--transition-normal);
+    border: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* Add random column spans for width variety */
+.masonry-item:nth-child(7n+1) {
+    grid-column: span 2;
+}
+
+.masonry-item:nth-child(11n+3) {
+    grid-column: span 1;
+}
+
+.masonry-item:nth-child(13n+5) {
+    grid-column: span 2;
+}
+
+.masonry-item:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--card-shadow-hover);
+    border-color: var(--color-border-hover);
+}
+
+.masonry-item.filtered {
+    filter: var(--filter-grayscale);
+    pointer-events: none;
+}
+
+.masonry-item-image {
+    width: 100%;
+    aspect-ratio: 1;
+    overflow: hidden;
+    position: relative;
+    background: var(--color-surface-elevated);
+}
+
+.masonry-item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-slow);
+}
+
+.masonry-item:hover .masonry-item-image img {
+    transform: scale(1.05);
+    filter: var(--filter-brightness-hover);
+}
+
+.masonry-item-image.no-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--gradient-primary);
+}
+
+.no-image-placeholder {
+    font-size: 64px;
+    font-weight: var(--font-weight-bold);
+    color: white;
+    opacity: 0.5;
+}
+
+.masonry-item-content {
+    padding: var(--card-padding);
+    flex: 1;
+}
+
+.masonry-item-title {
+    font-size: var(--font-size-h3);
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: var(--spacing-xs);
+    line-height: var(--line-height-tight);
+}
+
+.masonry-item-subtitle {
+    font-size: var(--font-size-small);
+    color: var(--color-text-secondary);
+    font-weight: var(--font-weight-normal);
+}
+
+/* ═══ DETAIL PAGE ═══ */
+.detail-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: var(--spacing-2xl);
+}
+
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 100px;
+    color: var(--color-text-primary);
+    text-decoration: none;
+    font-weight: var(--font-weight-medium);
+    transition: all var(--transition-normal);
+    margin-bottom: var(--spacing-xl);
+}
+
+.back-button:hover {
+    background: var(--color-surface-elevated);
+    border-color: var(--color-border-hover);
+    transform: translateX(-4px);
+}
+
+.detail-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--card-border-radius);
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+}
+
+.detail-images {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-md);
+    padding: var(--spacing-xl);
+    background: var(--color-surface-elevated);
+}
+
+.detail-image {
+    position: relative;
+}
+
+.detail-image img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: var(--spacing-md);
+    border: 1px solid var(--color-border);
+}
+
+.image-label {
+    margin-top: var(--spacing-sm);
+    font-size: var(--font-size-small);
+    color: var(--color-text-muted);
+    text-align: center;
+}
+
+.detail-content {
+    padding: var(--spacing-xl);
+}
+
+.detail-title {
+    font-size: var(--font-size-h2);
+    font-weight: var(--font-weight-bold);
+    margin-bottom: var(--spacing-xl);
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.detail-fields {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.detail-field {
+    padding-bottom: var(--spacing-lg);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.detail-field:last-child {
+    border-bottom: none;
+}
+
+.detail-field-label {
+    font-size: var(--font-size-small);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: var(--spacing-sm);
+}
+
+.detail-field-value {
+    font-size: var(--font-size-base);
+    color: var(--color-text-primary);
+    line-height: var(--line-height-relaxed);
+    white-space: pre-wrap;
+}
+
+/* ═══ RESPONSIVE DESIGN ═══ */
+@media (max-width: 1024px) {
+    :root {
+        --grid-columns: 4;
+        --font-size-h1: 40px;
+        --font-size-h2: 28px;
+    }
+}
+
+@media (max-width: 768px) {
+    :root {
+        --grid-columns: 3;
+        --grid-min-column-width: 200px;
+        --font-size-h1: 32px;
+        --font-size-h2: 24px;
+        --container-padding: var(--spacing-md);
+    }
+    
+    .filter-bar {
+        gap: var(--spacing-sm);
+    }
+    
+    .filter-btn {
+        padding: var(--spacing-sm) var(--spacing-lg);
+        font-size: var(--font-size-small);
+    }
+    
+    .detail-images {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    :root {
+        --grid-columns: 2;
+        --grid-min-column-width: 150px;
+        --font-size-h1: 28px;
+    }
+    
+    .header {
+        padding: var(--spacing-xl) 0 var(--spacing-lg);
+    }
+    
+    .masonry-item-title {
+        font-size: var(--font-size-base);
+    }
+}

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <!-- Header -->
+    <header class="header">
+        <h1 class="header-title">Domestic Garden Database</h1>
+        <p class="header-subtitle">Explore the flora, fauna, and objects of domestic gardens</p>
+    </header>
+    
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="plants">Plants</button>
+        <button class="filter-btn" data-filter="animals">Animals</button>
+        <button class="filter-btn" data-filter="objects">Objects</button>
+        <button class="filter-btn" data-filter="garden_styles">Garden Styles</button>
+    </div>
+    
+    <!-- Masonry Grid -->
+    <div class="masonry-grid" id="masonryGrid">
+        {% for item in items %}
+        <a href="/item/{{ item.category }}/{{ item.id }}" 
+           class="masonry-item" 
+           data-category="{{ item.category }}"
+           data-display-category="{{ item.display_category }}">
+            {% if item.image %}
+            <div class="masonry-item-image">
+                <img src="/images/{{ item.image }}" 
+                     alt="{{ item.popular_name_english }}"
+                     loading="lazy"
+                     onerror="this.parentElement.classList.add('no-image')">
+            </div>
+            {% else %}
+            <div class="masonry-item-image no-image">
+                <div class="no-image-placeholder">
+                    <span>{{ item.popular_name_english[0] if item.popular_name_english else '?' }}</span>
+                </div>
+            </div>
+            {% endif %}
+            <div class="masonry-item-content">
+                <h3 class="masonry-item-title">{{ item.popular_name_english }}</h3>
+                {% if item.popular_name_japanese %}
+                <p class="masonry-item-subtitle">{{ item.popular_name_japanese }}</p>
+                {% endif %}
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Initialize masonry layout with random sizes
+    document.addEventListener('DOMContentLoaded', function() {
+        initMasonryLayout();
+        initFilters();
+    });
+</script>
+{% endblock %}
