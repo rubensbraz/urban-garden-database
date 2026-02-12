@@ -32,12 +32,20 @@ A beautiful, modern web application to explore the biodiversity of domestic gard
    *This script automatically imports data from Excel and maps images from the `images/` directory.*
 
 4. **Access the App**:
-   - Web Interface: [http://localhost:8000](http://localhost:8000)
-   - API Docs: [http://localhost:8000/docs](http://localhost:8000/docs)
+   - Web Interface: [http://localhost:8015](http://localhost:8015)
+   - API Docs: [http://localhost:8015/docs](http://localhost:8015/docs)
+
+## Configuration
+
+The application is configured via the `.env` file. You can adjust the following settings:
+
+- **APP_PORT**: The port the application runs on (default: `8015`).
+- **DEBUG**: Set to `True` for development, `False` for production.
+- **Database**: `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`.
 
 ## Project Structure
 
-```
+```text
 domestic_garden_database/
 ├── app/
 │   ├── main.py                 # FastAPI application

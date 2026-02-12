@@ -7,8 +7,6 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-garden_db}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5433:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
@@ -17,15 +15,15 @@ services:
 
   web:
     build: .
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    command: uvicorn app.main:app --host ${APP_HOST:-0.0.0.0} --port ${APP_PORT:-8015}
     restart: unless-stopped
     volumes:
       - ./data:/app/data
       - ./images:/app/images
     ports:
-      - "127.0.0.1:8000:8000"
+      - "127.0.0.1:${APP_PORT:-8015}:${APP_PORT:-8015}"
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-garden_db}
+      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:postgres@db:5432/garden_db}
       DEBUG: ${DEBUG:-False}
     depends_on:
       db:
