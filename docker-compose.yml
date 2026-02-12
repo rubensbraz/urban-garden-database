@@ -17,18 +17,16 @@ services:
 
   web:
     build: .
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    restart: unless-stopped
     volumes:
-      - ./app:/app/app
-      - ./scripts:/app/scripts
-      - ./config:/app/config
       - ./data:/app/data
       - ./images:/app/images
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-garden_db}
-      DEBUG: ${DEBUG:-True}
+      DEBUG: ${DEBUG:-False}
     depends_on:
       db:
         condition: service_healthy

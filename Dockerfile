@@ -16,8 +16,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY app/ ./app/
 COPY scripts/ ./scripts/
 COPY config/ ./config/
-COPY alembic.ini .
-COPY alembic/ ./alembic/
 
 # Create images directory
 RUN mkdir -p /app/images
@@ -26,4 +24,4 @@ RUN mkdir -p /app/images
 EXPOSE 8000
 
 # Run the application
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
