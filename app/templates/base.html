@@ -3,26 +3,26 @@
 <head>
     <meta name="description" content="Explore the biodiversity of domestic gardens in Japan. Comprehensive database of plants (flora), animals (fauna), garden objects, and traditional garden styles with detailed information and images.">
     <meta name="keywords" content="domestic garden, Japanese garden, flora, fauna, plants, animals, biodiversity, garden database, horticulture, wildlife, garden objects">
-    <meta name="author" content="Domestic Garden Database">
+    <meta name="author" content="Urban Garden Database">
     <meta name="robots" content="index, follow">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ request.url }}">
-    <meta property="og:title" content="{% block og_title %}Domestic Garden Database - Explore Japanese Garden Biodiversity{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}Urban Garden Database - Explore Japanese Garden Biodiversity{% endblock %}">
     <meta property="og:description" content="Comprehensive database of plants, animals, objects, and garden styles found in domestic gardens in Japan. Explore 218 species and items with detailed information and images.">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="{{ request.url }}">
-    <meta property="twitter:title" content="{% block twitter_title %}Domestic Garden Database - Explore Japanese Garden Biodiversity{% endblock %}">
+    <meta property="twitter:title" content="{% block twitter_title %}Urban Garden Database - Explore Japanese Garden Biodiversity{% endblock %}">
     <meta property="twitter:description" content="Comprehensive database of plants, animals, objects, and garden styles found in domestic gardens in Japan.">
     
     <!-- Theme Color -->
     <meta name="theme-color" content="#3d9970">
     
-    <title>{% block title %}Domestic Garden Database - Japanese Garden Biodiversity{% endblock %}</title>
+    <title>{% block title %}Urban Garden Database - Japanese Garden Biodiversity{% endblock %}</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/static/favicon/herb.svg">
@@ -53,7 +53,10 @@
         <div class="header-container">
             <a href="/" class="site-logo">
                 <img src="/static/favicon/herb.svg" alt="Herb Icon" class="logo-icon" width="32" height="32">
-                <span class="logo-text">Domestic Garden Database</span>
+                <div class="logo-details">
+                    <span class="logo-text">Urban Garden Database</span>
+                    <span class="navbar-subtitle">Exploratory mapping of Tokyo vernacular gardens</span>
+                </div>
             </a>
             <nav class="site-nav">
                 <a href="/" class="nav-link">Home</a>
@@ -70,14 +73,7 @@
     <!-- Site Footer -->
     <footer class="site-footer">
         <div class="footer-content">
-            <p class="footer-text">© 2026 Domestic Garden Database - Educational Project</p>
-            <div class="footer-links">
-                <a href="/about" class="footer-link">About & Copyright</a>
-                <span class="footer-separator">•</span>
-                <a href="mailto:contato@ayanasaitomira.com" class="footer-link">Contact</a>
-                <span class="footer-separator">•</span>
-                <a href="https://github.com/rubensbraz/domestic_garden_database" target="_blank" class="footer-link">GitHub</a>
-            </div>
+            <p class="footer-text">© 2026. Urban Garden Database.</p>
         </div>
     </footer>
     

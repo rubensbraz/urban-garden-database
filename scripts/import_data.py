@@ -528,7 +528,7 @@ def import_garden_styles(df: pd.DataFrame, session, image_mapper: ImageMapper):
 def main():
     """Main import function"""
     print("=" * 80)
-    print("Domestic Garden Database - COMPLETE DATA IMPORT")
+    print("Urban Garden Database - COMPLETE DATA IMPORT")
     print("=" * 80)
 
     # Initialize image mapper

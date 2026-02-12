@@ -1,5 +1,5 @@
 /**
- * Domestic Garden Database - Main JavaScript
+ * Urban Garden Database - Main JavaScript
  * Handles random scattered layout, filtering, and interactive elements.
  * 
  * @module Main

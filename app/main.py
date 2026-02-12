@@ -14,7 +14,7 @@ def create_application() -> FastAPI:
         FastAPI: The configured application instance.
     """
     application = FastAPI(
-        title="Domestic Garden Database",
+        title="Urban Garden Database",
         description="A database of flora, fauna, and objects found in domestic gardens",
         version="1.0.0",
         docs_url="/docs",

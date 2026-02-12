@@ -1,4 +1,4 @@
-# 🌿 Domestic Garden Database
+# 🌿 Urban Garden Database
 
 A beautiful, modern web application to explore the biodiversity of domestic gardens in Japan. Features a comprehensive database of 218+ species including flora, fauna, objects, and garden styles.
 

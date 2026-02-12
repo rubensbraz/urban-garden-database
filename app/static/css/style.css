@@ -102,9 +102,8 @@ body {
 .site-header {
     background: var(--color-surface);
     border-bottom: 1px solid var(--color-border);
-    padding: var(--spacing-lg) 0;
-    position: sticky;
-    top: 0;
+    padding: var(--spacing-md) 0;
+    position: static;
     z-index: 1000;
     backdrop-filter: blur(10px);
 }
@@ -137,13 +136,26 @@ body {
     display: block;
 }
 
+.logo-details {
+    display: flex;
+    flex-direction: column;
+}
+
 .logo-text {
-    font-size: var(--font-size-h3);
+    font-size: var(--font-size-large);
     font-weight: var(--font-weight-bold);
     background: var(--gradient-primary);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    line-height: 1.2;
+}
+
+.navbar-subtitle {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    font-weight: var(--font-weight-normal);
+    letter-spacing: 0.5px;
 }
 
 .site-nav {
@@ -180,7 +192,7 @@ body {
 }
 
 .header-title {
-    font-size: var(--font-size-h1);
+    font-size: 2.5rem;
     font-weight: var(--font-weight-bold);
     background: var(--gradient-primary);
     -webkit-background-clip: text;
@@ -204,10 +216,8 @@ body {
     flex-wrap: wrap;
     margin-bottom: var(--spacing-3xl);
     padding: var(--spacing-lg);
-    background: var(--glass-background);
-    border: var(--glass-border);
-    border-radius: var(--card-border-radius);
-    backdrop-filter: blur(var(--glass-blur));
+    background: transparent;
+    border: none;
 }
 
 .filter-btn {
@@ -244,12 +254,13 @@ body {
 }
 
 .filter-btn.active {
-    border-color: transparent;
-    color: white;
+    border-color: var(--color-primary);
+    color: var(--color-text-primary);
+    box-shadow: 0 0 20px rgba(61, 153, 112, 0.6);
 }
 
 .filter-btn.active::before {
-    opacity: 1;
+    opacity: 0;
 }
 
 /* ═══ SCATTERED GRID ═══ */
@@ -386,12 +397,31 @@ body {
 .about-section h2 {
     color: var(--color-primary);
     margin-bottom: var(--spacing-lg);
-    font-size: var(--font-size-h2);
+    font-size: 1.5rem;
+}
+
+.about-section h3 {
+    color: var(--color-text-primary);
+    margin-top: var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
+    font-size: 1.1rem;
+    font-weight: var(--font-weight-semibold);
 }
 
 .about-section p {
     line-height: 1.8;
     margin-bottom: var(--spacing-md);
+    color: var(--color-text-primary);
+    font-size: 0.95rem;
+}
+
+.project-info p {
+    margin-bottom: var(--spacing-sm);
+    line-height: 1.6;
+}
+
+.project-info b {
+    font-weight: var(--font-weight-semibold);
     color: var(--color-text-primary);
 }
 
@@ -421,17 +451,16 @@ body {
     border: 2px solid var(--color-primary);
 }
 
-.credits-section {
-    text-align: center;
+.team-link {
+    color: var(--color-text-primary);
+    text-decoration: none;
+    font-weight: var(--font-weight-light);
+    transition: all var(--transition-normal);
 }
 
-.developer-name {
-    font-size: 1.1em;
-    font-weight: var(--font-weight-bold);
-}
-
-.repo-link-container {
-    margin-top: var(--spacing-md);
+.team-link:hover {
+    color: var(--color-primary-light);
+    text-decoration: underline;
 }
 
 .email-link-text {
@@ -440,9 +469,9 @@ body {
 
 /* ═══ FOOTER ═══ */
 .site-footer {
-    margin-top: var(--spacing-4xl);
-    padding: var(--spacing-3xl) 0;
-    background: var(--color-surface);
+    margin-top: var(--spacing-3xl);
+    padding: var(--spacing-xl) 0;
+    background: transparent;
     border-top: 1px solid var(--color-border);
 }
 
@@ -454,33 +483,10 @@ body {
 }
 
 .footer-text {
-    color: var(--color-text-secondary);
-    margin-bottom: var(--spacing-lg);
-    font-size: var(--font-size-small);
-}
-
-.footer-links {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: var(--spacing-md);
-    flex-wrap: wrap;
-}
-
-.footer-link {
-    color: var(--color-primary);
-    text-decoration: none;
-    font-weight: var(--font-weight-medium);
-    transition: all var(--transition-normal);
-}
-
-.footer-link:hover {
-    color: var(--color-primary-light);
-    text-decoration: underline;
-}
-
-.footer-separator {
     color: var(--color-text-muted);
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: var(--font-weight-normal);
 }
 
 .contact-info {
@@ -494,7 +500,6 @@ body {
 .email-link {
     color: var(--color-primary);
     text-decoration: none;
-    font-size: var(--font-size-h3);
     font-weight: var(--font-weight-semibold);
     transition: all var(--transition-normal);
 }
