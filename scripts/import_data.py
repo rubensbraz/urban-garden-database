@@ -44,8 +44,12 @@ class ImageMapper:
         self.image_cache = self._build_image_cache()
 
     def _build_image_cache(self) -> Dict[str, List[Dict]]:
-        """Build a cache of all images organized by normalized names"""
-        cache = {}
+        """
+        Build a cache of all images organized by normalized names.
+        Prioritizes .webp images over other formats.
+        """
+        # Intermediate cache: name -> type -> {path, original_name, suffix}
+        temp_cache = {}
 
         # Files to ignore
         ignore_patterns = [
@@ -57,6 +61,8 @@ class ImageMapper:
             "Dandellion Else Picture.jpg",
         ]
 
+        total_files = 0
+
         for img_path in self.images_dir.rglob("*"):
             if not img_path.is_file():
                 continue
@@ -65,14 +71,11 @@ class ImageMapper:
             if any(pattern in str(img_path) for pattern in ignore_patterns):
                 continue
 
-            if img_path.suffix.lower() not in [
-                ".jpg",
-                ".jpeg",
-                ".png",
-                ".gif",
-                ".webp",
-            ]:
+            suffix = img_path.suffix.lower()
+            if suffix not in [".jpg", ".jpeg", ".png", ".gif", ".webp"]:
                 continue
+
+            total_files += 1
 
             # Extract item name and image type from filename
             filename = img_path.stem
@@ -89,23 +92,47 @@ class ImageMapper:
                 item_name = filename
                 img_type = "Reference Picture"
 
-            # Normalize item name for matching
+            # Normalize keys
             normalized_name = self._normalize_name(item_name)
-
-            # Standardize image type
             img_type_std = self._standardize_image_type(img_type)
 
-            if normalized_name not in cache:
-                cache[normalized_name] = []
+            if normalized_name not in temp_cache:
+                temp_cache[normalized_name] = {}
 
-            cache[normalized_name].append(
-                {"type": img_type_std, "path": rel_path, "original_name": item_name}
-            )
+            # Logic to choose best image (WebP > others)
+            existing = temp_cache[normalized_name].get(img_type_std)
+
+            current_data = {
+                "type": img_type_std,
+                "path": rel_path,
+                "original_name": item_name,
+                "suffix": suffix,
+            }
+
+            if not existing:
+                temp_cache[normalized_name][img_type_std] = current_data
+            else:
+                # If current is webp and existing is not, replace
+                if suffix == ".webp" and existing["suffix"] != ".webp":
+                    temp_cache[normalized_name][img_type_std] = current_data
+                # If both are same format or existing is already webp, keep existing (or do nothing)
+
+        # Convert temp_cache to final format
+        final_cache = {}
+        total_images = 0
+
+        for name, types in temp_cache.items():
+            final_cache[name] = []
+            for img_data in types.values():
+                # Remove internal 'suffix' key before adding to final list
+                img_entry = {k: v for k, v in img_data.items() if k != "suffix"}
+                final_cache[name].append(img_entry)
+                total_images += 1
 
         print(
-            f"✓ Image cache built: {len(cache)} unique items, {sum(len(v) for v in cache.values())} total images"
+            f"✓ Image cache built: {len(final_cache)} unique items, {total_images} total images (WebP prioritized)"
         )
-        return cache
+        return final_cache
 
     def _normalize_name(self, name: str) -> str:
         """Normalize name for matching"""

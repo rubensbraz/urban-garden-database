@@ -43,11 +43,28 @@ const CATEGORY_MAPPING = {
 /**
  * Initialize scattered layout with random positions.
  * Calculates optimal grid height and places items to minimize overlap.
+ * On mobile/tablet (< 768px), it disables random positioning to allow CSS grid layout.
  */
 function initScatteredLayout() {
     const grid = document.getElementById(CONFIG.GRID_ID);
     if (!grid) {
         console.error('Grid element not found:', CONFIG.GRID_ID);
+        return;
+    }
+
+    // Check if we are on mobile/tablet
+    if (window.innerWidth < 768) {
+        // Reset styles for mobile layout
+        grid.style.minHeight = '';
+        Array.from(grid.children).forEach(item => {
+            item.style.position = '';
+            item.style.left = '';
+            item.style.top = '';
+            item.style.transform = '';
+            item.style.opacity = '';
+            item.style.animation = '';
+        });
+        console.log('Mobile view detected: Scattered layout disabled');
         return;
     }
 
@@ -65,6 +82,9 @@ function initScatteredLayout() {
     const occupiedSpaces = [];
 
     items.forEach((item, index) => {
+        // Ensure standard positioning for desktop
+        item.style.position = 'absolute';
+
         const isTextOnly = item.classList.contains('text-only');
         const itemWidth = isTextOnly ? CONFIG.ITEM.WIDTH_TEXT : CONFIG.ITEM.WIDTH_STANDARD;
         const itemHeight = isTextOnly ? CONFIG.ITEM.HEIGHT_TEXT : CONFIG.ITEM.HEIGHT_STANDARD;
@@ -127,7 +147,7 @@ function initScatteredLayout() {
         makeDraggable(item);
     });
 
-    console.log(`Initialized layout for ${items.length} items`);
+    console.log(`Initialized scattered layout for ${items.length} items`);
 }
 
 /**

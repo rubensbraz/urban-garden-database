@@ -51,19 +51,19 @@ async def homepage(request: Request, db: Session = Depends(get_db)):
     )
 
 
-@router.get("/about-images", response_class=HTMLResponse)
-async def about_images(request: Request):
+@router.get("/about", response_class=HTMLResponse)
+async def about(request: Request):
     """
-    Render the 'About Images' page with copyright information.
+    Render the 'About' page.
 
     Args:
         request: FastAPI request object.
 
     Returns:
-        TemplateResponse: Rendered 'about_images.html' template.
+        TemplateResponse: Rendered 'about.html' template.
     """
     return templates.TemplateResponse(
-        "about_images.html",
+        "about.html",
         {
             "request": request,
         },
