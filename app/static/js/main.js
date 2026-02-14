@@ -41,6 +41,19 @@ const CATEGORY_MAPPING = {
 };
 
 /**
+ * Shuffle array in place using Fisher-Yates algorithm
+ * @param {Array} array - Array to shuffle
+ * @returns {Array} - Shuffled array
+ */
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+/**
  * Initialize scattered layout with random positions.
  * Calculates optimal grid height and places items to minimize overlap.
  * On mobile/tablet (< 768px), it disables random positioning to allow CSS grid layout.
@@ -54,9 +67,16 @@ function initScatteredLayout() {
 
     // Check if we are on mobile/tablet
     if (window.innerWidth < 768) {
+        // Shuffle items for random order on mobile
+        const items = Array.from(grid.children);
+        shuffleArray(items);
+
+        // Re-append items in shuffled order
+        items.forEach(item => grid.appendChild(item));
+
         // Reset styles for mobile layout
         grid.style.minHeight = '';
-        Array.from(grid.children).forEach(item => {
+        items.forEach(item => {
             item.style.position = '';
             item.style.left = '';
             item.style.top = '';
@@ -64,7 +84,7 @@ function initScatteredLayout() {
             item.style.opacity = '';
             item.style.animation = '';
         });
-        console.log('Mobile view detected: Scattered layout disabled');
+        console.log('Mobile view detected: Items shuffled, scattered layout disabled');
         return;
     }
 
@@ -153,6 +173,7 @@ function initScatteredLayout() {
 /**
  * Make an item draggable via mouse interaction.
  * Handles drag start, move, and end events, updating element position.
+ * Uses requestAnimationFrame for smooth performance.
  * 
  * @param {HTMLElement} item - The DOM element to make draggable
  */
@@ -160,6 +181,8 @@ function makeDraggable(item) {
     let isDragging = false;
     let startX, startY;
     let initialLeft, initialTop;
+    let currentX, currentY;
+    let rafId = null;
 
     // Prevent default link behavior on drag
     item.addEventListener('dragstart', (e) => e.preventDefault());
@@ -178,25 +201,45 @@ function makeDraggable(item) {
         // Store mouse start position
         startX = e.clientX;
         startY = e.clientY;
+        currentX = e.clientX;
+        currentY = e.clientY;
 
         item.style.cursor = 'grabbing';
         item.style.zIndex = '1000'; // Bring to front
+
+        // Disable transitions during drag for instant response
+        item.style.transition = 'none';
     });
 
-    document.addEventListener('mousemove', function (e) {
+    // Update function using requestAnimationFrame
+    function updatePosition() {
         if (!isDragging) return;
 
-        e.preventDefault();
-
-        // Calculate delta and new position
-        const deltaX = e.clientX - startX;
-        const deltaY = e.clientY - startY;
+        const deltaX = currentX - startX;
+        const deltaY = currentY - startY;
 
         const newLeft = initialLeft + deltaX;
         const newTop = initialTop + deltaY;
 
         item.style.left = `${newLeft}px`;
         item.style.top = `${newTop}px`;
+
+        rafId = requestAnimationFrame(updatePosition);
+    }
+
+    document.addEventListener('mousemove', function (e) {
+        if (!isDragging) return;
+
+        e.preventDefault();
+
+        // Store current mouse position
+        currentX = e.clientX;
+        currentY = e.clientY;
+
+        // Start animation loop if not already running
+        if (!rafId) {
+            rafId = requestAnimationFrame(updatePosition);
+        }
     });
 
     document.addEventListener('mouseup', function (e) {
@@ -204,6 +247,13 @@ function makeDraggable(item) {
             isDragging = false;
             item.style.cursor = 'grab';
             item.style.zIndex = ''; // Reset z-index
+            item.style.transition = ''; // Re-enable transitions
+
+            // Cancel animation frame
+            if (rafId) {
+                cancelAnimationFrame(rafId);
+                rafId = null;
+            }
 
             // Update initial position for next drag
             initialLeft = parseInt(item.style.left) || 0;
@@ -532,6 +582,25 @@ class ImageLightbox {
     }
 }
 
+/**
+ * Convert URLs in text to clickable links
+ * Finds all detail-field-value elements and linkifies URLs
+ */
+function linkifyUrls() {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const fieldValues = document.querySelectorAll('.detail-field-value');
+
+    fieldValues.forEach(element => {
+        const text = element.textContent;
+        if (urlRegex.test(text)) {
+            const linkedText = text.replace(urlRegex, (url) => {
+                return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="inline-link">${url}</a>`;
+            });
+            element.innerHTML = linkedText;
+        }
+    });
+}
+
 // Initialize application on DOMContentLoaded
 document.addEventListener('DOMContentLoaded', () => {
     // Inject styles
@@ -549,6 +618,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize Lightbox
     new ImageLightbox();
+
+    // Linkify URLs in detail pages
+    linkifyUrls();
 
     console.log('App initialized');
 });

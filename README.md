@@ -8,7 +8,9 @@ A beautiful, modern web application to explore the biodiversity of domestic gard
 
 - Docker and Docker Compose.
 
-### Setup
+### Development Setup (Hot-Reload)
+
+For local development with automatic code reloading:
 
 1. **Clone the repository**:
 
@@ -17,23 +19,53 @@ A beautiful, modern web application to explore the biodiversity of domestic gard
    cd domestic_garden_database
    ```
 
-2. **Start the application**:
+2. **Start the development environment**:
 
    ```bash
-   docker-compose up -d
+   docker compose -f docker-compose.dev.yml up
    ```
 
 3. **Import Data & Map Images**:
 
    ```bash
-   docker-compose run --rm web python scripts/import_data.py
+   docker compose -f docker-compose.dev.yml run --rm web python scripts/import_data.py
    ```
-
-   *This script automatically imports data from Excel and maps images from the `images/` directory.*
 
 4. **Access the App**:
    - Web Interface: [http://localhost:8015](http://localhost:8015)
    - API Docs: [http://localhost:8015/docs](http://localhost:8015/docs)
+
+**Development Features:**
+
+- Hot-reload enabled (changes reflect instantly)
+- DEBUG mode active
+- Code volumes mounted (no rebuild needed)
+- Port 8015
+
+### Production Deployment
+
+For production deployment behind Nginx:
+
+1. **Build and start**:
+
+   ```bash
+   docker compose up -d --build
+   ```
+
+2. **Import Data**:
+
+   ```bash
+   docker compose run --rm web python scripts/import_data.py
+   ```
+
+3. **Configure Nginx** to proxy to `http://127.0.0.1:8000`
+
+**Production Features:**
+
+- Optimized build (code frozen in image)
+- DEBUG mode disabled
+- Port restricted to localhost (127.0.0.1:8000)
+- Auto-restart on failure
 
 ## Configuration
 
@@ -58,7 +90,8 @@ domestic_garden_database/
 │   └── update_db_images.py     # Database image path updater
 ├── data/                       # Excel source file
 ├── images/                     # Source images (Flora, Fauna, etc.)
-├── docker-compose.yml
+├── docker-compose.yml          # Production configuration
+├── docker-compose.dev.yml      # Development configuration (hot-reload)
 └── requirements.txt
 ```
 
@@ -69,7 +102,11 @@ domestic_garden_database/
 To optimize new images, run the conversion script:
 
 ```bash
-docker-compose run --rm web python scripts/convert_images.py
+# Development
+docker compose -f docker-compose.dev.yml run --rm web python scripts/convert_images.py
+
+# Production
+docker compose run --rm web python scripts/convert_images.py
 ```
 
 ### Updating Database Links
@@ -77,7 +114,11 @@ docker-compose run --rm web python scripts/convert_images.py
 If you add or rename images, update the database references:
 
 ```bash
-docker-compose run --rm web python scripts/update_db_images.py
+# Development
+docker compose -f docker-compose.dev.yml run --rm web python scripts/update_db_images.py
+
+# Production
+docker compose run --rm web python scripts/update_db_images.py
 ```
 
 ## Tech Stack

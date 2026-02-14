@@ -4,9 +4,9 @@
   "description": "Explore the biodiversity of domestic gardens in Japan",
   "icons": [
     {
-      "src": "/static/favicon/herb.svg",
+      "src": "/static/favicon/icon.png",
       "sizes": "any",
-      "type": "image/svg+xml"
+      "type": "image/png"
     }
   ],
   "theme_color": "#3d9970",
